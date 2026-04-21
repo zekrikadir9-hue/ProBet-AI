@@ -1,19 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "تطبيق التحليلات الرياضية والذكاء الاصطناعي يعمل بنجاح على Render!"
-
-@app.route('/predict')
-def predict():
-    # هنا سنضع خوارزمية الذكاء الاصطناعي لاحقاً
-    return jsonify({
-        "match": "Real Madrid vs Barcelona",
-        "prediction": "Home Win",
-        "confidence": "85%"
-    })
+    # سيقوم الآن بفتح ملف index.html الموجود في مجلد templates
+    return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
