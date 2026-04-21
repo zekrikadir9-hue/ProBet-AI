@@ -5,42 +5,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProBet AI | التوقعات الذكية</title>
     <style>
-        :root { --primary: #00ff88; --bg: #0a0a0a; }
-        body { background: var(--bg); color: white; font-family: sans-serif; text-align: center; }
-        
-        /* حركة الجمل المتحركة */
-        .marquee { overflow: hidden; white-space: nowrap; background: #1a1a1a; padding: 10px; color: var(--primary); }
-        .marquee span { display: inline-block; animation: scroll 15s linear infinite; }
-        @keyframes scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        :root {
+            --primary: #00ff88;
+            --vip: #ffcc00;
+            --bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* شريط الجمل المتحركة */
+        .marquee {
+            width: 100%;
+            background: linear-gradient(90deg, #1a1a1a, #222);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--primary);
+            overflow: hidden;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .marquee span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll 20s linear infinite;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* العنوان الرئيسي */
+        header {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        header h1 span {
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary);
+        }
+
+        /* حاوية المباريات */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
         /* تصميم بطاقة المباراة */
-        .card { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 20px; margin: 20px; padding: 20px;
-            transition: 0.3s;
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .card:hover { transform: scale(1.02); border-color: var(--primary); }
-        
-        .team-logo { width: 50px; height: 50px; border-radius: 50%; background: #222; }
-        .prediction-badge { background: var(--primary); color: black; padding: 5px 15px; border-radius: 50px; font-weight: bold; }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .team {
+            flex: 1;
+            text-align: center;
+        }
+
+        .team img {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            margin-bottom: 10px;
+        }
+
+        .team p {
+            margin: 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .vs {
+            flex: 0.5;
+            text-align: center;
+            font-style: italic;
+            font-weight: 900;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* أوسمة التوقعات */
+        .prediction-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-free {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .badge-vip {
+            background: var(--vip);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+        }
+
+        .lock-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .confidence {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #bbb;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
+
     <div class="marquee">
-        <span>🔥 ذكاء اصطناعي يحلل الآن: ريال مدريد ضد برشلونة | نسبة النجاح بالأمس: 92% | اشترك في باقة VIP الآن 🔥</span>
+        <span>🔥 ProBet AI: جاري تحليل مباريات اليوم بدقة عالية | باقة الـ VIP متوفرة الآن عبر بريدي موب | نسبة نجاح التوقعات الأسبوعية تتجاوز 88% 🔥</span>
     </div>
 
-    <h1>ProBet <span style="color: var(--primary);">AI</span></h1>
+    <header>
+        <h1>ProBet <span>AI</span></h1>
+        <p style="color: #888;">مستقبلك في التحليل الرياضي الذكي</p>
+    </header>
 
-    <div class="card">
-        <div style="display: flex; justify-content: space-around; align-items: center;">
-            <div><div class="team-logo"></div><p>فريق الأرض</p></div>
-            <div><h2>VS</h2></div>
-            <div><div class="team-logo"></div><p>فريق الضيف</p></div>
+    <div class="container">
+        {% for match in matches %}
+        <div class="card">
+            <div class="match-info">
+                <div class="team">
+                    <img src="{{ match.home_logo }}" alt="{{ match.home_team }}">
+                    <p>{{ match.home_team }}</p>
+                </div>
+                
+                <div class="vs">VS</div>
+                
+                <div class="team">
+                    <img src="{{ match.away_logo }}" alt="{{ match.away_team }}">
+                    <p>{{ match.away_team }}</p>
+                </div>
+            </div>
+
+            <div class="prediction-box">
+                {% if match.status == 'VIP' %}
+                    <span class="lock-icon">🔒</span>
+                    <div class="badge badge-vip">توقع VIP محمي</div>
+                    <span class="confidence">اشترك لمشاهدة تحليل الذكاء الاصطناعي</span>
+                {% else %}
+                    <div class="badge badge-free">التوقع: {{ match.prediction }}</div>
+                    <span class="confidence">نسبة الثقة: {{ match.confidence }}</span>
+                {% endif %}
+            </div>
         </div>
-        <div class="prediction-badge">توقع AI: فوز صاحب الأرض (85%)</div>
+        {% endfor %}
     </div>
+
+    <footer>
+        &copy; 2026 ProBet AI - جميع الحقوق محفوظة لـ ZEKRI KADIR
+    </footer>
+
 </body>
 </html>
