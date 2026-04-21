@@ -37,7 +37,7 @@
         .marquee span {
             display: inline-block;
             padding-left: 100%;
-            animation: scroll 20s linear infinite;
+            animation: scroll 25s linear infinite;
             color: var(--primary);
             font-weight: bold;
             font-size: 0.9rem;
@@ -55,19 +55,20 @@
         }
 
         header h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin: 0;
             letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         header h1 span {
             color: var(--primary);
-            text-shadow: 0 0 15px var(--primary);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
         }
 
         /* حاوية المباريات */
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -76,27 +77,24 @@
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-radius: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 25px;
             padding: 25px;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             position: relative;
-            overflow: hidden;
         }
 
         .card:hover {
             transform: translateY(-5px);
             border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1);
         }
 
         .match-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .team {
@@ -105,44 +103,47 @@
         }
 
         .team img {
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
             margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            padding: 5px;
         }
 
         .team p {
             margin: 0;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #fff;
         }
 
         .vs {
-            flex: 0.5;
+            flex: 0.4;
             text-align: center;
-            font-style: italic;
             font-weight: 900;
             color: var(--primary);
             font-size: 1.2rem;
+            opacity: 0.8;
         }
 
-        /* أوسمة التوقعات */
+        /* صندوق التوقعات */
         .prediction-box {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
             padding: 15px;
             text-align: center;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
         }
 
         .badge {
             display: inline-block;
-            padding: 6px 20px;
+            padding: 8px 20px;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
-            text-transform: uppercase;
+            text-decoration: none;
         }
 
         .badge-free {
@@ -153,39 +154,43 @@
         .badge-vip {
             background: var(--vip);
             color: #000;
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+            cursor: pointer;
+            animation: pulse 2s infinite;
         }
 
-        .lock-icon {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            display: block;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .confidence {
             display: block;
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 0.8rem;
-            color: #bbb;
+            color: #aaa;
         }
 
         footer {
             text-align: center;
             padding: 40px;
-            color: #666;
+            color: #555;
             font-size: 0.8rem;
         }
+
+        a { text-decoration: none; }
     </style>
 </head>
 <body>
 
     <div class="marquee">
-        <span>🔥 ProBet AI: جاري تحليل مباريات اليوم بدقة عالية | باقة الـ VIP متوفرة الآن عبر بريدي موب | نسبة نجاح التوقعات الأسبوعية تتجاوز 88% 🔥</span>
+        <span>🔥 ProBet AI: جاري تحليل أهم مباريات اليوم بدقة عالية | باقة الـ VIP متوفرة الآن عبر بريدي موب (الجزائر) | نسبة نجاح التوقعات الأسبوعية تتجاوز 90% 🔥</span>
     </div>
 
     <header>
         <h1>ProBet <span>AI</span></h1>
-        <p style="color: #888;">مستقبلك في التحليل الرياضي الذكي</p>
+        <p style="color: #888;">الجيل القادم من التحليل الرياضي</p>
     </header>
 
     <div class="container">
@@ -193,23 +198,24 @@
         <div class="card">
             <div class="match-info">
                 <div class="team">
-                    <img src="{{ match.home_logo }}" alt="{{ match.home_team }}">
+                    <img src="{{ match.home_logo }}" alt="logo">
                     <p>{{ match.home_team }}</p>
                 </div>
                 
                 <div class="vs">VS</div>
                 
                 <div class="team">
-                    <img src="{{ match.away_logo }}" alt="{{ match.away_team }}">
+                    <img src="{{ match.away_logo }}" alt="logo">
                     <p>{{ match.away_team }}</p>
                 </div>
             </div>
 
             <div class="prediction-box">
                 {% if match.status == 'VIP' %}
-                    <span class="lock-icon">🔒</span>
-                    <div class="badge badge-vip">توقع VIP محمي</div>
-                    <span class="confidence">اشترك لمشاهدة تحليل الذكاء الاصطناعي</span>
+                    <a href="/pay">
+                        <div class="badge badge-vip">🔒 إفتح توقع الـ VIP</div>
+                        <span class="confidence">اضغط هنا للاشتراك عبر بريدي موب</span>
+                    </a>
                 {% else %}
                     <div class="badge badge-free">التوقع: {{ match.prediction }}</div>
                     <span class="confidence">نسبة الثقة: {{ match.confidence }}</span>
