@@ -4,7 +4,7 @@ from flask import Flask, render_template, jsonify, request
 app = Flask(__name__)
 
 # --- إعدادات البيانات (يمكنك وضع مفتاح API-Football هنا لاحقاً) ---
-API_KEY = "ضعه_هنا_اختياري"
+API_KEY ="86fcd9a4745789924658c45ee6c71525"
 
 @app.route('/')
 def home():
