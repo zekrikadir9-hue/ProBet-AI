@@ -48,7 +48,6 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* العنوان الرئيسي */
         header {
             padding: 40px 20px;
             text-align: center;
@@ -58,7 +57,6 @@
             font-size: 2.8rem;
             margin: 0;
             letter-spacing: 2px;
-            text-transform: uppercase;
         }
 
         header h1 span {
@@ -66,14 +64,12 @@
             text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
         }
 
-        /* حاوية المباريات */
         .container {
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* تصميم بطاقة المباراة */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
@@ -82,12 +78,7 @@
             margin-bottom: 25px;
             padding: 25px;
             transition: transform 0.3s ease;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
+            text-align: center;
         }
 
         .match-info {
@@ -97,99 +88,78 @@
             margin-bottom: 25px;
         }
 
-        .team {
-            flex: 1;
-            text-align: center;
-        }
+        .team { flex: 1; }
 
         .team img {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             object-fit: contain;
             margin-bottom: 10px;
             background: rgba(255,255,255,0.05);
             border-radius: 50%;
-            padding: 5px;
-        }
-
-        .team p {
-            margin: 0;
-            font-weight: bold;
-            font-size: 0.85rem;
-            color: #fff;
+            padding: 8px;
         }
 
         .vs {
             flex: 0.4;
-            text-align: center;
             font-weight: 900;
             color: var(--primary);
             font-size: 1.2rem;
-            opacity: 0.8;
         }
 
-        /* صندوق التوقعات */
         .prediction-box {
             background: rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
+            border-radius: 20px;
+            padding: 20px;
             border: 1px dashed rgba(255, 255, 255, 0.1);
         }
 
-        .badge {
-            display: inline-block;
-            padding: 8px 20px;
+        .btn {
+            display: block;
+            padding: 12px;
             border-radius: 50px;
-            font-size: 0.9rem;
             font-weight: bold;
             text-decoration: none;
+            transition: 0.3s;
+            margin: 5px 0;
         }
 
-        .badge-free {
+        .btn-free {
             background: var(--primary);
             color: #000;
         }
 
-        .badge-vip {
+        .btn-vip {
             background: var(--vip);
             color: #000;
-            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
-            cursor: pointer;
-            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+            animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
 
-        .confidence {
-            display: block;
+        .footer-text {
+            color: #666;
+            font-size: 0.8rem;
             margin-top: 10px;
-            font-size: 0.8rem;
-            color: #aaa;
+            display: block;
         }
 
-        footer {
-            text-align: center;
-            padding: 40px;
-            color: #555;
-            font-size: 0.8rem;
-        }
-
-        a { text-decoration: none; }
+        footer { text-align: center; padding: 40px; color: #444; }
     </style>
 </head>
 <body>
 
     <div class="marquee">
-        <span>🔥 ProBet AI: جاري تحليل أهم مباريات اليوم بدقة عالية | باقة الـ VIP متوفرة الآن عبر بريدي موب (الجزائر) | نسبة نجاح التوقعات الأسبوعية تتجاوز 90% 🔥</span>
+        <span>🔥 تحليل ذكي لجميع مباريات اليوم | اشترك الآن في باقة VIP عبر بريدي موب لتصلك أقوى التوقعات | دقة عالية تصل إلى 92% 🔥</span>
     </div>
 
     <header>
-        <h1>ProBet <span>AI</span></h1>
+        <h1>PROBET <span>AI</span></h1>
         <p style="color: #888;">الجيل القادم من التحليل الرياضي</p>
     </header>
 
@@ -198,27 +168,23 @@
         <div class="card">
             <div class="match-info">
                 <div class="team">
-                    <img src="{{ match.home_logo }}" alt="logo">
+                    <img src="{{ match.home_logo }}">
                     <p>{{ match.home_team }}</p>
                 </div>
-                
                 <div class="vs">VS</div>
-                
                 <div class="team">
-                    <img src="{{ match.away_logo }}" alt="logo">
+                    <img src="{{ match.away_logo }}">
                     <p>{{ match.away_team }}</p>
                 </div>
             </div>
 
             <div class="prediction-box">
                 {% if match.status == 'VIP' %}
-                    <a href="/pay">
-                        <div class="badge badge-vip">🔒 إفتح توقع الـ VIP</div>
-                        <span class="confidence">اضغط هنا للاشتراك عبر بريدي موب</span>
-                    </a>
+                    <a href="/pay" class="btn btn-vip">🔒 إفتح توقع VIP</a>
+                    <span class="footer-text">ادفع عبر بريدي موب للمشاهدة</span>
                 {% else %}
-                    <div class="badge badge-free">التوقع: {{ match.prediction }}</div>
-                    <span class="confidence">نسبة الثقة: {{ match.confidence }}</span>
+                    <div class="btn btn-free">التوقع: {{ match.prediction }}</div>
+                    <span class="footer-text">نسبة الثقة: {{ match.confidence }}</span>
                 {% endif %}
             </div>
         </div>
@@ -228,6 +194,5 @@
     <footer>
         &copy; 2026 ProBet AI - جميع الحقوق محفوظة لـ ZEKRI KADIR
     </footer>
-
 </body>
 </html>
