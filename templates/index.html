@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProBet AI | التوقعات الذكية</title>
+    <style>
+        :root { --primary: #00ff88; --bg: #0a0a0a; }
+        body { background: var(--bg); color: white; font-family: sans-serif; text-align: center; }
+        
+        /* حركة الجمل المتحركة */
+        .marquee { overflow: hidden; white-space: nowrap; background: #1a1a1a; padding: 10px; color: var(--primary); }
+        .marquee span { display: inline-block; animation: scroll 15s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        /* تصميم بطاقة المباراة */
+        .card { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 20px; margin: 20px; padding: 20px;
+            transition: 0.3s;
+        }
+        .card:hover { transform: scale(1.02); border-color: var(--primary); }
+        
+        .team-logo { width: 50px; height: 50px; border-radius: 50%; background: #222; }
+        .prediction-badge { background: var(--primary); color: black; padding: 5px 15px; border-radius: 50px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="marquee">
+        <span>🔥 ذكاء اصطناعي يحلل الآن: ريال مدريد ضد برشلونة | نسبة النجاح بالأمس: 92% | اشترك في باقة VIP الآن 🔥</span>
+    </div>
+
+    <h1>ProBet <span style="color: var(--primary);">AI</span></h1>
+
+    <div class="card">
+        <div style="display: flex; justify-content: space-around; align-items: center;">
+            <div><div class="team-logo"></div><p>فريق الأرض</p></div>
+            <div><h2>VS</h2></div>
+            <div><div class="team-logo"></div><p>فريق الضيف</p></div>
+        </div>
+        <div class="prediction-badge">توقع AI: فوز صاحب الأرض (85%)</div>
+    </div>
+</body>
+</html>
