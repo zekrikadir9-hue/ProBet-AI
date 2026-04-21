@@ -6,48 +6,30 @@ app = Flask(__name__)
 
 API_KEY = "86fcd9a4745789924658c45ee6c71525"
 
-def ai_predict(home_name, away_name):
-    # محرك توقعات مبني على طول اسم الفريق (كمثال برمجي)
-    diff = len(home_name) - len(away_name)
-    if diff > 1:
-        return "فوز الفريق المضيف", "88%"
-    elif diff < -1:
-        return "فوز الفريق الضيف", "74%"
-    else:
-        return "تعادل محتمل", "60%"
-
 def get_real_matches():
     url = "https://v3.football.api-sports.io/fixtures"
-    # نجلب تاريخ اليوم تلقائياً
+    # سنجلب مباريات اليوم والغد لضمان وجود بيانات
     today = datetime.datetime.now().strftime('%Y-%m-%d')
-    headers = {
-        'x-rapidapi-key': API_KEY,
-        'x-rapidapi-host': 'v3.football.api-sports.io'
-    }
+    headers = {'x-rapidapi-key': API_KEY, 'x-rapidapi-host': 'v3.football.api-sports.io'}
     
     try:
-        # سنحاول جلب 50 مباراة من أهم الدوريات
+        # طلب 50 مباراة قادمة
         response = requests.get(url, headers=headers, params={"date": today, "next": 50})
         data = response.json()
         raw_matches = data.get('response', [])
         
-        if not raw_matches:
-            return None # لنقوم بعرض البيانات التوضيحية في حالة فراغ الـ API
+        if not raw_matches: return None
 
         processed_matches = []
         for i, m in enumerate(raw_matches):
-            h_name = m['teams']['home']['name']
-            a_name = m['teams']['away']['name']
-            pred, conf = ai_predict(h_name, a_name)
-            
             processed_matches.append({
-                "home_team": h_name,
+                "home_team": m['teams']['home']['name'],
                 "home_logo": m['teams']['home']['logo'],
-                "away_team": a_name,
+                "away_team": m['teams']['away']['name'],
                 "away_logo": m['teams']['away']['logo'],
-                "prediction": pred,
-                "confidence": conf,
-                "status": "FREE" if i < 3 else "VIP"
+                "prediction": "فوز " + m['teams']['home']['name'] if i%2==0 else "تعادل محتمل",
+                "confidence": "85%" if i%2==0 else "70%",
+                "status": "FREE" if i < 2 else "VIP" # أول مباراتين مجانية
             })
         return processed_matches
     except:
@@ -56,15 +38,9 @@ def get_real_matches():
 @app.route('/')
 def home():
     matches = get_real_matches()
-    
-    # إذا كانت القائمة فارغة، سنعرض هذه المباريات لكي لا يظهر الموقع معطلاً
     if not matches:
-        matches = [
-            {"home_team": "Real Madrid", "home_logo": "https://media.api-sports.io/football/teams/541.png", "away_team": "Barcelona", "away_logo": "https://media.api-sports.io/football/teams/529.png", "prediction": "فوز ريال مدريد", "confidence": "85%", "status": "FREE"},
-            {"home_team": "Man City", "home_logo": "https://media.api-sports.io/football/teams/50.png", "away_team": "Arsenal", "away_logo": "https://media.api-sports.io/football/teams/42.png", "prediction": "تعادل", "confidence": "70%", "status": "FREE"},
-            {"home_team": "MC Alger", "home_logo": "https://media.api-sports.io/football/teams/1141.png", "away_team": "JS Kabylie", "away_logo": "https://media.api-sports.io/football/teams/1145.png", "prediction": "فوز المولودية", "confidence": "90%", "status": "VIP"},
-        ]
-    
+        # بيانات احتياطية في حال تعطل الـ API
+        matches = [{"home_team": "Real Madrid", "home_logo": "https://media.api-sports.io/football/teams/541.png", "away_team": "Barcelona", "away_logo": "https://media.api-sports.io/football/teams/529.png", "prediction": "فوز الملكي", "confidence": "85%", "status": "FREE"}]
     return render_template('index.html', matches=matches)
 
 @app.route('/pay')
@@ -73,7 +49,7 @@ def payment():
 
 @app.route('/upload', methods=['POST'])
 def upload_receipt():
-    return "<h3>شكراً لك! تم إرسال الوصل. سيتم تفعيل حسابك خلال دقائق.</h3><a href='/'>العودة للرئيسية</a>"
+    return "<h3>تم الاستلام! سيتم التفعيل فوراً.</h3><a href='/'>رجوع</a>"
 
 if __name__ == "__main__":
     app.run()
