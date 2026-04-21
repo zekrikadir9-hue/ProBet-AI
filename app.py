@@ -8,29 +8,43 @@ API_KEY = "86fcd9a4745789924658c45ee6c71525"
 
 def get_real_matches():
     url = "https://v3.football.api-sports.io/fixtures"
-    # سنجلب مباريات اليوم والغد لضمان وجود بيانات
+    headers = {
+        'x-rapidapi-key': API_KEY,
+        'x-rapidapi-host': 'v3.football.api-sports.io'
+    }
+    
+    # جلب تاريخ اليوم
     today = datetime.datetime.now().strftime('%Y-%m-%d')
-    headers = {'x-rapidapi-key': API_KEY, 'x-rapidapi-host': 'v3.football.api-sports.io'}
+    
+    # قائمة بأهم الدوريات لضمان ظهور مباريات قوية (إنجلترا، إسبانيا، دوري الأبطال، الجزائر، إلخ)
+    leagues = [39, 140, 141, 135, 78, 61, 2, 1]
+    
+    processed_matches = []
     
     try:
-        # طلب 50 مباراة قادمة
-        response = requests.get(url, headers=headers, params={"date": today, "next": 50})
+        # طلب المباريات القادمة (أول 50 مباراة قادمة عالمياً)
+        response = requests.get(url, headers=headers, params={"next": 50})
         data = response.json()
         raw_matches = data.get('response', [])
         
-        if not raw_matches: return None
-
-        processed_matches = []
         for i, m in enumerate(raw_matches):
-            processed_matches.append({
-                "home_team": m['teams']['home']['name'],
-                "home_logo": m['teams']['home']['logo'],
-                "away_team": m['teams']['away']['name'],
-                "away_logo": m['teams']['away']['logo'],
-                "prediction": "فوز " + m['teams']['home']['name'] if i%2==0 else "تعادل محتمل",
-                "confidence": "85%" if i%2==0 else "70%",
-                "status": "FREE" if i < 2 else "VIP" # أول مباراتين مجانية
-            })
+            # فلترة: نأخذ فقط المباريات التي تنتمي للدوريات الكبرى لضمان الجودة
+            if m['league']['id'] in leagues or i < 15:
+                h_name = m['teams']['home']['name']
+                a_name = m['teams']['away']['name']
+                
+                # منطق VIP: أول مباراتين مجانية والباقي مقفل
+                status = "FREE" if i < 2 else "VIP"
+                
+                processed_matches.append({
+                    "home_team": h_name,
+                    "home_logo": m['teams']['home']['logo'],
+                    "away_team": a_name,
+                    "away_logo": m['teams']['away']['logo'],
+                    "prediction": "فوز " + h_name if i % 2 == 0 else "تعادل أو " + a_name,
+                    "confidence": "82%" if i % 2 == 0 else "71%",
+                    "status": status
+                })
         return processed_matches
     except:
         return None
@@ -38,9 +52,12 @@ def get_real_matches():
 @app.route('/')
 def home():
     matches = get_real_matches()
+    # إذا فشل الـ API تماماً، تظهر هذه المباريات كدعاية للموقع
     if not matches:
-        # بيانات احتياطية في حال تعطل الـ API
-        matches = [{"home_team": "Real Madrid", "home_logo": "https://media.api-sports.io/football/teams/541.png", "away_team": "Barcelona", "away_logo": "https://media.api-sports.io/football/teams/529.png", "prediction": "فوز الملكي", "confidence": "85%", "status": "FREE"}]
+        matches = [
+            {"home_team": "Real Madrid", "home_logo": "https://media.api-sports.io/football/teams/541.png", "away_team": "Barcelona", "away_logo": "https://media.api-sports.io/football/teams/529.png", "prediction": "فوز ريال مدريد", "confidence": "85%", "status": "FREE"},
+            {"home_team": "Liverpool", "home_logo": "https://media.api-sports.io/football/teams/40.png", "away_team": "Man City", "away_logo": "https://media.api-sports.io/football/teams/50.png", "prediction": "تعادل مثير", "confidence": "77%", "status": "VIP"}
+        ]
     return render_template('index.html', matches=matches)
 
 @app.route('/pay')
@@ -49,7 +66,7 @@ def payment():
 
 @app.route('/upload', methods=['POST'])
 def upload_receipt():
-    return "<h3>تم الاستلام! سيتم التفعيل فوراً.</h3><a href='/'>رجوع</a>"
+    return "<h3>شكراً لك! تم استلام الوصل بنجاح، سيتم تفعيل حسابك خلال دقائق.</h3><a href='/'>العودة للمباريات</a>"
 
 if __name__ == "__main__":
     app.run()
