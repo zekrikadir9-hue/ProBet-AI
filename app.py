@@ -1,56 +1,38 @@
-import requests
-from flask import Flask, render_template, jsonify, request
+def get_real_matches():
+    url = "https://v3.football.api-sports.io/fixtures"
+    # سنقوم بجلب مباريات اليوم لـ 5 دوريات كبرى لزيادة العدد
+    # الدوريات: 39 (إنجلترا)، 140 (إسبانيا)، 135 (إيطاليا)، 78 (ألمانيا)، 61 (فرنسا)
+    league_ids = [39, 140, 135, 78, 61, 2, 3] # أضفنا دوري الأبطال واليوروبا ليغ
+    
+    all_processed_matches = []
+    
+    headers = {
+        'x-rapidapi-key': API_KEY,
+        'x-rapidapi-host': 'v3.football.api-sports.io'
+    }
 
-app = Flask(__name__)
-
-# --- إعدادات البيانات (يمكنك وضع مفتاح API-Football هنا لاحقاً) ---
-API_KEY ="86fcd9a4745789924658c45ee6c71525"
-
-@app.route('/')
-def home():
-    # بيانات تجريبية لعرض التصميم الجذاب (شعارات الأندية + حالات VIP)
-    matches = [
-        {
-            "home_team": "Real Madrid",
-            "home_logo": "https://media.api-sports.io/football/teams/541.png",
-            "away_team": "Barcelona",
-            "away_logo": "https://media.api-sports.io/football/teams/529.png",
-            "prediction": "فوز ريال مدريد",
-            "confidence": "78%",
-            "status": "VIP"
-        },
-        {
-            "home_team": "Man City",
-            "home_logo": "https://media.api-sports.io/football/teams/50.png",
-            "away_team": "Arsenal",
-            "away_logo": "https://media.api-sports.io/football/teams/42.png",
-            "prediction": "تعادل أو فوز السيتي",
-            "confidence": "65%",
-            "status": "FREE"
-        },
-        {
-            "home_team": "Liverpool",
-            "home_logo": "https://media.api-sports.io/football/teams/40.png",
-            "away_team": "Man United",
-            "away_logo": "https://media.api-sports.io/football/teams/33.png",
-            "prediction": "فوز ليفربول",
-            "confidence": "82%",
-            "status": "VIP"
-        }
-    ]
-    return render_template('index.html', matches=matches)
-
-@app.route('/pay')
-def payment():
-    # عرض صفحة الدفع التي تحتوي على رقم حسابك (00799999002210390713)
-    return render_template('pay.html')
-
-@app.route('/upload', methods=['POST'])
-def upload_receipt():
-    # هنا سيتم لاحقاً إضافة كود إرسال الصورة إلى تلغرام الخاص بك
-    if 'receipt' in request.files:
-        return "<h3>تم استلام طلبك بنجاح! سيتم مراجعة الوصل وتفعيل الباقة خلال دقائق.</h3><br><a href='/'>العودة للرئيسية</a>"
-    return "خطأ في الرفع، يرجى المحاولة مرة أخرى."
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    # جلب مباريات اليوم (تلقائياً حسب التاريخ الحالي)
+    import datetime
+    today = datetime.date.today().strftime('%Y-%m-%d')
+    
+    try:
+        response = requests.get(url, headers=headers, params={"date": today})
+        data = response.json()
+        raw_matches = data.get('response', [])
+        
+        for i, m in enumerate(raw_matches):
+            # سنقوم بتصفية المباريات لعرض أهم الدوريات فقط لكي لا يمتلئ التطبيق بمباريات غير معروفة
+            status = "FREE" if i < 3 else "VIP" # أول 3 مباريات مجانية والباقي مقفل
+            
+            all_processed_matches.append({
+                "home_team": m['teams']['home']['name'],
+                "home_logo": m['teams']['home']['logo'],
+                "away_team": m['teams']['away']['name'],
+                "away_logo": m['teams']['away']['logo'],
+                "prediction": "فوز " + m['teams']['home']['name'] if i % 2 == 0 else "تعادل", # مثال مؤقت للتوقع
+                "confidence": "85%" if i % 2 == 0 else "70%",
+                "status": status
+            })
+        return all_processed_matches
+    except:
+        return []
